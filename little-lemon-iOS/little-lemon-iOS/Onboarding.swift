@@ -20,14 +20,49 @@ struct Onboarding: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                NavigationLink(destination: Home(), isActive: $isLoggedIn) {
+            VStack(spacing: 20) {
+                 NavigationLink(destination: Home(), isActive: $isLoggedIn) {
                     EmptyView()
                 }
-                TextField("First Name", text: $firstName)
-                TextField("Last Name", text: $lastName)
-                TextField("Email", text: $email)
-                Button("Register") {
+                // Welcome Header
+                VStack(spacing: 8) {
+                    Text("Welcome to Little Lemon")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
+                    Text("Please fill out the form below to register and start your journey!")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                }
+                .padding(.bottom, 30)
+                
+                // Input Fields
+                VStack(spacing: 16) {
+                    TextField("First Name", text: $firstName)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .shadow(radius: 1)
+                    
+                    TextField("Last Name", text: $lastName)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .shadow(radius: 1)
+                    
+                    TextField("Email", text: $email)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(10)
+                        .keyboardType(.emailAddress)
+                        .shadow(radius: 1)
+                }
+                .padding(.horizontal)
+                
+                // Register Button
+                Button(action: {
                     if !firstName.isEmpty && !lastName.isEmpty && !email.isEmpty {
                         UserDefaults.standard.set(firstName, forKey: firstNameKey)
                         UserDefaults.standard.set(lastName, forKey: lastNameKey)
@@ -35,15 +70,36 @@ struct Onboarding: View {
                         UserDefaults.standard.set(true, forKey: kIsLoggedIn)
                         isLoggedIn = true
                     }
+                }) {
+                    Text("Register")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(firstName.isEmpty || lastName.isEmpty || email.isEmpty ? Color.gray : Color(.red))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                        .shadow(radius: 2)
                 }
+                .disabled(firstName.isEmpty || lastName.isEmpty || email.isEmpty)
+                .padding(.horizontal)
+                
+                Spacer()
             }
+            .padding()
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Onboarding")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationViewStyle(StackNavigationViewStyle())
             .onAppear {
                 isLoggedIn = UserDefaults.standard.bool(forKey: kIsLoggedIn)
+            }
+            .navigationBarHidden(true)
+            .navigationDestination(isPresented: $isLoggedIn) {
+                Home()
             }
         }
     }
 }
-
 #Preview {
     Onboarding()
 }
